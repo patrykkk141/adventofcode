@@ -1,4 +1,4 @@
-package pl.paiw.adventofcode.days;
+package pl.paiw.adventofcode;
 
 public class PasswordPolicyRow {
 
