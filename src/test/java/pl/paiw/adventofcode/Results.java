@@ -1,10 +1,11 @@
 package pl.paiw.adventofcode;
 
+import org.junit.Test;
+
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.junit.Test;
+import java.util.stream.IntStream;
 
 public class Results {
 
@@ -13,6 +14,7 @@ public class Results {
     private final List<String> puzzle_Day3 = PuzzleReader.getPuzzleLines("day3.txt");
     private final List<String> puzzle_Day4 = PuzzleReader.getPuzzleLines("day4.txt");
     private final List<String> puzzle_Day5 = PuzzleReader.getPuzzleLines("day5.txt");
+    private final List<String> puzzle_Day6 = PuzzleReader.getPuzzleLines("day6.txt");
 
     @Test
     public void getResult_Day1() {
@@ -278,7 +280,26 @@ public class Results {
                 break;
             }
         }
-
     }
 
+    @Test
+    public void getResults_day6() {
+        List<List<String>> groups = PuzzleUtils.parseCustomDeclarationGroups(puzzle_Day6);
+
+        Long result = groups.stream().map(group -> group // group = List<String>
+                .stream().flatMapToInt(String::chars).distinct().count()).reduce(0L, Long::sum);
+
+        System.out.printf("Number of questions sum: %d", result);
+    }
+
+    @Test
+    public void getResult_day6_1() {
+        List<List<String>> groups = PuzzleUtils.parseCustomDeclarationGroups(puzzle_Day6);
+
+        long result = groups.stream().flatMapToInt(group -> IntStream.rangeClosed('a', 'z').filter(character ->
+                group.stream().allMatch(answers -> answers.indexOf(character) >= 0))).count();
+
+
+        System.out.printf("Number of questions sum: %d", result);
+    }
 }
