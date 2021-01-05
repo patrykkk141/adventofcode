@@ -15,6 +15,7 @@ public class Results {
     private final List<String> puzzle_Day4 = PuzzleReader.getPuzzleLines("day4.txt");
     private final List<String> puzzle_Day5 = PuzzleReader.getPuzzleLines("day5.txt");
     private final List<String> puzzle_Day6 = PuzzleReader.getPuzzleLines("day6.txt");
+    private final List<String> puzzle_Day7 = PuzzleReader.getPuzzleLines("day7.txt");
 
     @Test
     public void getResult_Day1() {
@@ -302,4 +303,64 @@ public class Results {
 
         System.out.printf("Number of questions sum: %d", result);
     }
+
+    @Test
+    public void getResult_day7() {
+        Map<String, Set<String>> bagPolicies = PuzzleUtils.parseBagPolicy(puzzle_Day7);
+
+        Set<String> bagColorsThatCouldContainShinyGoldBag = new HashSet<>();
+        Set<String> wantedBags = new HashSet<>();
+        wantedBags.add("shiny gold bags");
+
+        Map<String, Set<String>> bagsWithShinyGoldBag;
+        do {
+            bagsWithShinyGoldBag = bagPolicies.entrySet()
+                    .stream()
+                    .filter(policies -> wantedBags
+                            .stream()
+                            .map(value -> {
+                                String[] split = value.split(" ");
+                                return split[0] + " " + split[1];
+                            })
+                            .anyMatch(m -> policies.getValue()
+                                    .stream()
+                                    .anyMatch(policy -> policy.contains(m))))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            bagColorsThatCouldContainShinyGoldBag.addAll(bagsWithShinyGoldBag.keySet());
+
+            wantedBags.clear();
+            wantedBags.addAll(bagsWithShinyGoldBag.keySet());
+        } while (bagsWithShinyGoldBag.keySet().size() > 0);
+
+        System.out.printf("%d could contain at least 1 shiny gold bag.", bagColorsThatCouldContainShinyGoldBag.size());
+    }
+
+    @Test
+    public void getResult_day7_1() {
+        Map<String, Set<String>> bagPolicies = PuzzleUtils.parseBagPolicy(puzzle_Day7);
+
+        long res = findNestedBags(bagPolicies, " 1 shiny gold bags") - 1;
+
+        System.out.printf("Bags inside single gold shiny bag: %d", res);
+
+    }
+
+    private long findNestedBags(Map<String, Set<String>> bagPolicies, String bag) {
+        if (bag.contains("no other bags")) {
+            return 0;
+        }
+
+        String[] split = bag.split(" "); // liczba walizek
+        Set<String> bags = bagPolicies.get(split[2] + " " + split[3] + " bags");
+        long result = 1;
+
+        for(String x: bags) {
+            result += findNestedBags(bagPolicies, x);
+        }
+
+        return Long.parseLong(split[1]) * result;
+    }
+
+
 }

@@ -1,9 +1,6 @@
 package pl.paiw.adventofcode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import pl.paiw.adventofcode.PasswordPolicyRow;
@@ -68,6 +65,19 @@ public class PuzzleUtils {
             group.add(row);
         }
         result.add(group);
+
+        return result;
+    }
+
+    public static Map<String, Set<String>> parseBagPolicy(List<String> puzzle) {
+        Map<String, Set<String>> result = new HashMap<>();
+
+        for(String row : puzzle) {
+            String[] split = row.split(" contain");
+            String[] rules = split[1].split(",");
+
+            result.put(split[0], Set.of(rules));
+        }
 
         return result;
     }
